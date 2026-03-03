@@ -15,6 +15,7 @@ The format follows Keep a Changelog and this project is currently pre-release.
 ### Changed
 
 - Expanded `ISSUES.md` with initial serialized edge-case backlog (`SIN-0001` to `SIN-0007`) covering security, sync reliability, state isolation, parsing gaps, and UX fallback risks.
+- Removed `LICENSE.md` from the repository; canonical license file remains `LICENSE`.
 - Updated project engineering guidance to require building and validating both Debug and Release variants for completed implementation changes.
 - Updated engineering guidance to require a professional automated testing suite and to run/pass relevant tests before Debug and Release build validation.
 - Added `copilot-instructions.md` to `.gitignore`.
