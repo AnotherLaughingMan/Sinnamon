@@ -11,6 +11,7 @@ The format follows Keep a Changelog and this project is currently pre-release.
 - Added `ISSUES.md` as the centralized issue register with serialized IDs (`SIN-####`), required tags, lifecycle sections, and a standard issue template for consistent tracking.
 - Added repository baseline documentation files: `README.md`, `CODE_OF_CONDUCT.md`, and `LICENSE.md`.
 - Added Electron runtime entrypoints (`electron/main.cjs`, `electron/preload.cjs`) for desktop app execution.
+- Added Electron packaging pipeline via `electron-builder` with end-to-end Debug and Release commands.
 
 ### Changed
 
@@ -23,11 +24,15 @@ The format follows Keep a Changelog and this project is currently pre-release.
 - Updated project instructions to explicitly define Electron + React + TypeScript as the base stack direction.
 - Updated project instructions to treat `https://github.com/AnotherLaughingMan/Sinnamon` as the canonical source repository for this project.
 - Updated `package.json` scripts to run the app in Electron during development (`npm run dev`) and direct launch (`npm run start`).
+- Updated `package.json` with `package:debug` and `package:release` scripts plus Electron builder configuration for Windows packaging targets.
 - Updated README tech stack and commands to reflect Electron usage.
+- Updated README with Electron packaging commands for Debug (`npm run package:debug`) and Release (`npm run package:release`) builds.
 - Expanded `.gitignore` with Electron packaging output paths (`out/`, `release/`).
 - Updated project license from MIT to GNU Affero General Public License v3.0 (AGPL-3.0).
 - Corrected `LICENSE.md` to the full verbatim AGPL-3.0 text from `AnotherLaughingMan/Sinnamon` upstream `LICENSE`.
 - Initialized local git repository on `main` and linked `origin` to `https://github.com/AnotherLaughingMan/Sinnamon.git`.
+- Added Electron builder configuration and scripts for executable end-to-end Debug and Release packaging pipeline.
+- Updated `tsconfig.node.json` to `noEmit` to prevent generated `vite.config` build artifacts during typecheck/build runs.
 
 ### Fixed
 

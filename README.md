@@ -58,6 +58,18 @@ Build (release bundle):
 npm run build
 ```
 
+Package Electron Debug build (unpacked app for validation):
+
+```bash
+npm run package:debug
+```
+
+Package Electron Release build (Windows NSIS installer):
+
+```bash
+npm run package:release
+```
+
 Preview production build:
 
 ```bash

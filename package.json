@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "Sinnamon Matrix client",
+  "author": "AnotherLaughingMan <AnotherLaughingMan@users.noreply.github.com>",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
@@ -12,6 +13,8 @@
     "start": "electron .",
     "build": "npm run build:web",
     "build:web": "tsc -b && vite build",
+    "package:debug": "npm run build:web && electron-builder --dir --config.directories.output=release/debug",
+    "package:release": "npm run build:web && electron-builder --win nsis --publish never --config.directories.output=release/release",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -24,8 +27,39 @@
     "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^9.2.1",
     "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
     "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.sinnamon.client",
+    "productName": "Sinnamon",
+    "copyright": "Copyright © 2026 Sinnamon Contributors",
+    "asar": true,
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }
