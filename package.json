@@ -13,6 +13,8 @@
     "start": "electron .",
     "build": "npm run build:web",
     "build:web": "tsc -b && vite build",
+    "test": "vitest",
+    "test:run": "vitest run",
     "package:debug": "npm run build:web && electron-builder --dir --config.directories.output=release/debug",
     "package:release": "npm run build:web && electron-builder --win nsis --publish never --config.directories.output=release/release",
     "preview": "vite preview"
@@ -30,6 +32,7 @@
     "electron-builder": "^25.1.8",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
+    "vitest": "^4.1.2",
     "wait-on": "^8.0.1"
   },
   "build": {

@@ -9,6 +9,9 @@ The format follows Keep a Changelog and this project is currently pre-release.
 ### Added
 
 - Added `ISSUES.md` as the centralized issue register with serialized IDs (`SIN-####`), required tags, lifecycle sections, and a standard issue template for consistent tracking.
+- Added initial unit-test harness with Vitest and first coverage for Matrix state utility behavior (room merge/read-state updates and message retention/merge rules).
+- Added Matrix message-mapping unit tests covering text/notice/media parsing and unsupported-message fallback behavior.
+- Added Matrix send-message API tests covering successful event-id responses and HTTP failure handling.
 - Added repository baseline documentation files: `README.md`, `CODE_OF_CONDUCT.md`, and `LICENSE.md`.
 - Added Electron runtime entrypoints (`electron/main.cjs`, `electron/preload.cjs`) for desktop app execution.
 - Added Electron packaging pipeline via `electron-builder` with end-to-end Debug and Release commands.
@@ -16,6 +19,10 @@ The format follows Keep a Changelog and this project is currently pre-release.
 ### Changed
 
 - Expanded `ISSUES.md` with initial serialized edge-case backlog (`SIN-0001` to `SIN-0007`) covering security, sync reliability, state isolation, parsing gaps, and UX fallback risks.
+- Updated Matrix credential persistence policy: settings now default to session storage with an explicit "Remember credentials" opt-in for local persistence.
+- Expanded Matrix timeline parsing and UI rendering beyond plain text to support `m.notice`, `m.emote`, `m.image`, and `m.file` message types with unsupported-type fallback handling.
+- Updated room-read behavior to publish Matrix `m.read` receipts for the active room's latest event and deduplicate repeated receipt submissions.
+- Implemented composer send flow with optimistic timeline updates, Matrix send API integration, Enter-to-send behavior, and send-button loading guardrails.
 - Removed `LICENSE.md` from the repository; canonical license file remains `LICENSE`.
 - Updated project engineering guidance to require building and validating both Debug and Release variants for completed implementation changes.
 - Updated engineering guidance to require a professional automated testing suite and to run/pass relevant tests before Debug and Release build validation.
@@ -38,6 +45,7 @@ The format follows Keep a Changelog and this project is currently pre-release.
 
 - Resolved `SIN-0002`: polling error handling no longer reports `connected` before successful recovery; state now remains degraded until incremental sync succeeds.
 - Resolved `SIN-0003`: account/config context changes now clear prior room/timeline session data immediately to prevent stale cross-account visibility.
+- Improved incremental sync lifecycle safety: polling requests now use abort signals so in-flight sync calls are canceled during teardown/config changes instead of applying stale updates.
 
 ## [0.1.0-alpha.0] - 2026-03-03
 

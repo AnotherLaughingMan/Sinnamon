@@ -74,8 +74,27 @@ export function SettingsPanel({
             />
           </label>
 
+          <label className="settings-checkbox" htmlFor="remember-credentials">
+            <input
+              id="remember-credentials"
+              checked={draft.rememberCredentials}
+              onChange={(event) =>
+                setDraft((previous) => ({
+                  ...previous,
+                  rememberCredentials: event.target.checked,
+                }))
+              }
+              type="checkbox"
+            />
+            <span>Remember credentials on this device</span>
+          </label>
+
           <p className="settings-note" aria-label="Message retention policy">
             {retentionLabel}
+          </p>
+          <p className="settings-note" aria-label="Credential storage policy">
+            Credentials are stored for this session by default. Enable remember to persist across app
+            restarts.
           </p>
         </section>
 

@@ -53,4 +53,5 @@ Thumbs.db
 Desktop.ini
 
 # Local project docs/config not for source control
-copilot-instructions.md
+.github/copilot-instructions.md
+

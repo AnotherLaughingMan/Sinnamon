@@ -13,6 +13,7 @@ export const MOCK_MESSAGES: TimelineMessage[] = [
     roomId: 'mock-general',
     author: 'sinnamon-dev',
     content: 'Welcome to Sinnamon. Connect Matrix in settings when ready.',
+    kind: 'text',
     timestamp: Date.now() - 120000,
   },
   {
@@ -20,6 +21,7 @@ export const MOCK_MESSAGES: TimelineMessage[] = [
     roomId: 'mock-general',
     author: 'matrix-bot',
     content: 'This timeline is now state-driven and ready for Matrix sync.',
+    kind: 'notice',
     timestamp: Date.now() - 60000,
   },
   {
@@ -27,6 +29,7 @@ export const MOCK_MESSAGES: TimelineMessage[] = [
     roomId: 'mock-support',
     author: 'helper',
     content: 'Ask setup questions here.',
+    kind: 'text',
     timestamp: Date.now() - 90000,
   },
 ];

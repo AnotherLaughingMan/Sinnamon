@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Tooltip } from './Tooltip';
 import { getRetentionSummaryLabel } from '../matrix/retention';
 import type { ConnectionState, RoomSummary, TimelineMessage } from '../matrix/types';
@@ -12,7 +13,9 @@ type LayoutShellProps = {
   connectionState: ConnectionState;
   connectionError: string;
   onSelectRoom: (roomId: string) => void;
+  onSendMessage: (content: string) => Promise<void>;
   onOpenSettings: () => void;
+  isSendingMessage: boolean;
 };
 
 function formatTimestamp(timestamp: number) {
@@ -20,6 +23,45 @@ function formatTimestamp(timestamp: number) {
     hour: '2-digit',
     minute: '2-digit',
   });
+}
+
+function renderMessageContent(message: TimelineMessage) {
+  if (message.kind === 'notice') {
+    return <em>{message.content}</em>;
+  }
+
+  if (message.kind === 'emote') {
+    return <span>* {message.author} {message.content}</span>;
+  }
+
+  if (message.kind === 'image') {
+    if (message.mediaUrl) {
+      return (
+        <span>
+          Image: <a href={message.mediaUrl}>{message.content}</a>
+        </span>
+      );
+    }
+    return <span>Image: {message.content}</span>;
+  }
+
+  if (message.kind === 'file') {
+    if (message.mediaUrl) {
+      return (
+        <span>
+          File: <a href={message.mediaUrl}>{message.content}</a>
+        </span>
+      );
+    }
+    return <span>File: {message.content}</span>;
+  }
+
+  if (message.kind === 'unsupported') {
+    const typeLabel = message.rawType ? ` (${message.rawType})` : '';
+    return <span>Unsupported message{typeLabel}: {message.content}</span>;
+  }
+
+  return <span>{message.content}</span>;
 }
 
 export function LayoutShell({
@@ -30,9 +72,28 @@ export function LayoutShell({
   connectionState,
   connectionError,
   onSelectRoom,
+  onSendMessage,
   onOpenSettings,
+  isSendingMessage,
 }: LayoutShellProps) {
+  const [composerText, setComposerText] = useState('');
   const retentionLabel = getRetentionSummaryLabel();
+
+  useEffect(() => {
+    setComposerText('');
+  }, [selectedRoomId]);
+
+  const handleSend = () => {
+    const nextMessage = composerText.trim();
+    if (!nextMessage) {
+      return;
+    }
+
+    setComposerText('');
+    void onSendMessage(nextMessage).catch(() => {
+      setComposerText(nextMessage);
+    });
+  };
 
   return (
     <div className="app-shell">
@@ -130,7 +191,7 @@ export function LayoutShell({
                     <strong>{message.author}</strong>
                     <span>{formatTimestamp(message.timestamp)}</span>
                   </div>
-                  <p>{message.content}</p>
+                  <p>{renderMessageContent(message)}</p>
                 </div>
               </article>
             ))
@@ -152,15 +213,31 @@ export function LayoutShell({
                 +
               </button>
             </Tooltip>
-            <input id="composer" placeholder={`Message #${selectedRoomName}`} />
+            <input
+              id="composer"
+              placeholder={`Message #${selectedRoomName}`}
+              value={composerText}
+              onChange={(event) => setComposerText(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                  event.preventDefault();
+                  handleSend();
+                }
+              }}
+            />
             <Tooltip label="Insert Emoji">
               <button className="icon-btn" aria-label="Insert emoji">
                 😀
               </button>
             </Tooltip>
-            <Tooltip label="Gift Placeholder">
-              <button className="icon-btn" aria-label="Gift placeholder">
-                🎁
+            <Tooltip label="Send Message">
+              <button
+                className="icon-btn composer-send-btn"
+                aria-label="Send message"
+                onClick={handleSend}
+                disabled={isSendingMessage || composerText.trim().length === 0}
+              >
+                ➤
               </button>
             </Tooltip>
           </div>

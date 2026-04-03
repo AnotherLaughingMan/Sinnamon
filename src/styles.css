@@ -304,6 +304,11 @@ body,
   outline: none;
 }
 
+.composer-send-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .member-panel {
   background: var(--bg-1);
   border-left: 1px solid #222428;
@@ -414,6 +419,18 @@ body,
   gap: 6px;
   color: var(--text-1);
   font-size: 13px;
+}
+
+.settings-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-checkbox input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
 }
 
 .settings-note {

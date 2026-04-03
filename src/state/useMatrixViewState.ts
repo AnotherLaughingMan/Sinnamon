@@ -1,57 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MOCK_MESSAGES, MOCK_ROOMS } from '../matrix/mockData';
-import { MAX_MESSAGES_PER_ROOM, MAX_MESSAGES_TOTAL } from '../matrix/retention';
-import { syncMatrixState } from '../matrix/matrixService';
+import { publishReadReceipt, sendRoomTextMessage, syncMatrixState } from '../matrix/matrixService';
 import type { ConnectionState, MatrixConfig, RoomSummary, TimelineMessage } from '../matrix/types';
-
-function markActiveRoomRead(rooms: RoomSummary[], activeRoomId: string) {
-  return rooms.map((room) =>
-    room.id === activeRoomId && room.unreadCount > 0 ? { ...room, unreadCount: 0 } : room,
-  );
-}
-
-function trimMessages(messages: TimelineMessage[]) {
-  const perRoomCount = new Map<string, number>();
-  const kept: TimelineMessage[] = [];
-
-  for (let index = messages.length - 1; index >= 0; index -= 1) {
-    const message = messages[index];
-    const currentCount = perRoomCount.get(message.roomId) ?? 0;
-    if (currentCount >= MAX_MESSAGES_PER_ROOM) {
-      continue;
-    }
-    perRoomCount.set(message.roomId, currentCount + 1);
-    kept.push(message);
-  }
-
-  kept.reverse();
-  if (kept.length <= MAX_MESSAGES_TOTAL) {
-    return kept;
-  }
-  return kept.slice(-MAX_MESSAGES_TOTAL);
-}
-
-function mergeRooms(previousRooms: RoomSummary[], nextRooms: RoomSummary[]) {
-  const roomMap = new Map(previousRooms.map((room) => [room.id, room]));
-  nextRooms.forEach((room) => {
-    roomMap.set(room.id, room);
-  });
-  return Array.from(roomMap.values());
-}
-
-function mergeMessages(previousMessages: TimelineMessage[], nextMessages: TimelineMessage[]) {
-  const messageMap = new Map(previousMessages.map((message) => [message.id, message]));
-  nextMessages.forEach((message) => {
-    messageMap.set(message.id, message);
-  });
-  const sortedMessages = Array.from(messageMap.values()).sort(
-    (left, right) => left.timestamp - right.timestamp,
-  );
-  return trimMessages(sortedMessages);
-}
+import {
+  markActiveRoomRead,
+  mergeMessages,
+  mergeRooms,
+  trimMessages,
+} from './matrixViewStateUtils';
 
 function getConfigFingerprint(config: MatrixConfig) {
   return `${config.homeserverUrl.trim()}|${config.userId.trim()}|${config.accessToken.trim()}`;
+}
+
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === 'AbortError';
+}
+
+function isMatrixEventId(value: string) {
+  return value.startsWith('$');
 }
 
 export function useMatrixViewState(config: MatrixConfig) {
@@ -62,10 +29,68 @@ export function useMatrixViewState(config: MatrixConfig) {
   const [error, setError] = useState<string>('');
   const [syncToken, setSyncToken] = useState<string>('');
   const [activeSessionFingerprint, setActiveSessionFingerprint] = useState<string>('');
+  const [pendingMessageCount, setPendingMessageCount] = useState(0);
+  const lastPublishedReceiptByRoomRef = useRef(new Map<string, string>());
 
   const selectRoom = useCallback((roomId: string) => {
     setSelectedRoomId(roomId);
   }, []);
+
+  const sendMessage = useCallback(
+    async (rawContent: string) => {
+      const content = rawContent.trim();
+      if (!content || !selectedRoomId) {
+        return;
+      }
+
+      if (connectionState !== 'connected') {
+        setError('Connect to Matrix before sending messages.');
+        return;
+      }
+
+      if (!config.homeserverUrl.trim() || !config.accessToken.trim()) {
+        setError('Add homeserver URL and access token to send messages.');
+        return;
+      }
+
+      const txnId = `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+      const optimisticId = `local-${txnId}`;
+      const optimisticMessage: TimelineMessage = {
+        id: optimisticId,
+        roomId: selectedRoomId,
+        author: config.userId.trim() || 'you',
+        content,
+        kind: 'text',
+        timestamp: Date.now(),
+      };
+
+      setPendingMessageCount((previous) => previous + 1);
+      setError('');
+      setMessages((previousMessages) => mergeMessages(previousMessages, [optimisticMessage]));
+
+      try {
+        const eventId = await sendRoomTextMessage(config, selectedRoomId, content, txnId);
+
+        if (eventId) {
+          setMessages((previousMessages) =>
+            previousMessages.map((message) =>
+              message.id === optimisticId ? { ...message, id: eventId } : message,
+            ),
+          );
+        }
+      } catch (requestError) {
+        setMessages((previousMessages) =>
+          previousMessages.filter((message) => message.id !== optimisticId),
+        );
+        setError(
+          requestError instanceof Error ? requestError.message : 'Failed to send Matrix message',
+        );
+      } finally {
+        setPendingMessageCount((previous) => Math.max(previous - 1, 0));
+      }
+    },
+    [config, connectionState, selectedRoomId],
+  );
 
   const connect = useCallback(
     async (overrideConfig?: MatrixConfig) => {
@@ -117,15 +142,19 @@ export function useMatrixViewState(config: MatrixConfig) {
     }
 
     let canceled = false;
+    let activeRequestController: AbortController | null = null;
 
     const poll = async () => {
       let currentToken = syncToken;
 
       while (!canceled) {
+        activeRequestController = new AbortController();
+
         try {
           const incrementalState = await syncMatrixState(config, {
             since: currentToken,
             timeoutMs: 30000,
+            signal: activeRequestController.signal,
           });
 
           if (canceled) {
@@ -143,7 +172,7 @@ export function useMatrixViewState(config: MatrixConfig) {
           setError('');
           setConnectionState('connected');
         } catch (requestError) {
-          if (canceled) {
+          if (canceled || isAbortError(requestError)) {
             return;
           }
           setConnectionState('error');
@@ -159,6 +188,7 @@ export function useMatrixViewState(config: MatrixConfig) {
 
     return () => {
       canceled = true;
+      activeRequestController?.abort();
     };
   }, [activeSessionFingerprint, config, selectedRoomId, syncToken]);
 
@@ -168,6 +198,54 @@ export function useMatrixViewState(config: MatrixConfig) {
     }
     setRooms((previousRooms) => markActiveRoomRead(previousRooms, selectedRoomId));
   }, [selectedRoomId]);
+
+  useEffect(() => {
+    if (!selectedRoomId || connectionState !== 'connected') {
+      return;
+    }
+
+    if (!config.homeserverUrl.trim() || !config.accessToken.trim()) {
+      return;
+    }
+
+    const latestRoomMessage = [...messages]
+      .reverse()
+      .find((message) => message.roomId === selectedRoomId && isMatrixEventId(message.id));
+
+    if (!latestRoomMessage) {
+      return;
+    }
+
+    const lastPublishedEventId = lastPublishedReceiptByRoomRef.current.get(selectedRoomId);
+    if (lastPublishedEventId === latestRoomMessage.id) {
+      return;
+    }
+
+    let canceled = false;
+    const controller = new AbortController();
+
+    publishReadReceipt(config, selectedRoomId, latestRoomMessage.id, {
+      signal: controller.signal,
+    })
+      .then(() => {
+        if (canceled) {
+          return;
+        }
+        lastPublishedReceiptByRoomRef.current.set(selectedRoomId, latestRoomMessage.id);
+        setRooms((previousRooms) => markActiveRoomRead(previousRooms, selectedRoomId));
+      })
+      .catch((requestError) => {
+        if (canceled || isAbortError(requestError)) {
+          return;
+        }
+        setError('Unable to publish read receipt; unread counts may be temporarily stale.');
+      });
+
+    return () => {
+      canceled = true;
+      controller.abort();
+    };
+  }, [config, connectionState, messages, selectedRoomId]);
 
   useEffect(() => {
     const hasAnyConfigValue = Boolean(
@@ -181,6 +259,8 @@ export function useMatrixViewState(config: MatrixConfig) {
       setConnectionState('mock');
       setSyncToken('');
       setActiveSessionFingerprint('');
+      setPendingMessageCount(0);
+      lastPublishedReceiptByRoomRef.current = new Map();
       setError('Using mock data. Open settings to connect your Matrix account.');
       return;
     }
@@ -195,6 +275,8 @@ export function useMatrixViewState(config: MatrixConfig) {
     setSelectedRoomId('');
     setSyncToken('');
     setActiveSessionFingerprint('');
+    setPendingMessageCount(0);
+    lastPublishedReceiptByRoomRef.current = new Map();
     setConnectionState('connecting');
     setError('Connection settings changed. Connect to load rooms for this account.');
   }, [activeSessionFingerprint, config]);
@@ -217,6 +299,8 @@ export function useMatrixViewState(config: MatrixConfig) {
     connectionState,
     error,
     connect,
+    sendMessage,
+    isSendingMessage: pendingMessageCount > 0,
     selectRoom,
   };
 }
