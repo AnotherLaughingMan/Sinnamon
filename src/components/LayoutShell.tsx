@@ -16,6 +16,8 @@ type LayoutShellProps = {
   onSendMessage: (content: string) => Promise<void>;
   onOpenSettings: () => void;
   isSendingMessage: boolean;
+  isMemberPanelOpen: boolean;
+  onToggleMemberPanel: () => void;
 };
 
 function formatTimestamp(timestamp: number) {
@@ -75,6 +77,8 @@ export function LayoutShell({
   onSendMessage,
   onOpenSettings,
   isSendingMessage,
+  isMemberPanelOpen,
+  onToggleMemberPanel,
 }: LayoutShellProps) {
   const [composerText, setComposerText] = useState('');
   const retentionLabel = getRetentionSummaryLabel();
@@ -96,7 +100,7 @@ export function LayoutShell({
   };
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${isMemberPanelOpen ? '' : 'app-shell--members-hidden'}`.trim()}>
       <aside className="server-rail" aria-label="Servers">
         <Tooltip label="Home">
           <button className="rail-btn rail-btn--active" aria-label="Home server">
@@ -172,7 +176,12 @@ export function LayoutShell({
               </button>
             </Tooltip>
             <Tooltip label="Member List">
-              <button className="icon-btn" aria-label="Toggle member list">
+              <button
+                className="icon-btn"
+                aria-label="Toggle member list"
+                onClick={onToggleMemberPanel}
+                aria-pressed={isMemberPanelOpen}
+              >
                 👥
               </button>
             </Tooltip>
@@ -244,22 +253,24 @@ export function LayoutShell({
         </footer>
       </main>
 
-      <aside className="member-panel" aria-label="Member panel">
-        <header>
-          <h3>Members</h3>
-        </header>
-        <ul>
-          <li>
-            <span className="status-dot status-dot--online" />sinnamon-dev
-          </li>
-          <li>
-            <span className="status-dot status-dot--idle" />matrix-bot
-          </li>
-          <li>
-            <span className="status-dot" />guest-user
-          </li>
-        </ul>
-      </aside>
+      {isMemberPanelOpen && (
+        <aside className="member-panel" aria-label="Member panel">
+          <header>
+            <h3>Members</h3>
+          </header>
+          <ul>
+            <li>
+              <span className="status-dot status-dot--online" />sinnamon-dev
+            </li>
+            <li>
+              <span className="status-dot status-dot--idle" />matrix-bot
+            </li>
+            <li>
+              <span className="status-dot" />guest-user
+            </li>
+          </ul>
+        </aside>
+      )}
     </div>
   );
 }

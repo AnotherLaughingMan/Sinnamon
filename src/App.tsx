@@ -38,6 +38,7 @@ function readStoredConfig(storage: Storage) {
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isMemberPanelOpen, setIsMemberPanelOpen] = useState(true);
   const [config, setConfig] = useState<MatrixConfig>(() => {
     const localConfig = readStoredConfig(localStorage);
     if (localConfig) {
@@ -92,6 +93,8 @@ function App() {
         onSelectRoom={selectRoom}
         onSendMessage={sendMessage}
         isSendingMessage={isSendingMessage}
+        isMemberPanelOpen={isMemberPanelOpen}
+        onToggleMemberPanel={() => setIsMemberPanelOpen((previous) => !previous)}
         onOpenSettings={() => setIsSettingsOpen(true)}
       />
       <SettingsPanel

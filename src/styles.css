@@ -37,6 +37,10 @@ body,
   background: var(--bg-0);
 }
 
+.app-shell--members-hidden {
+  grid-template-columns: 72px 280px minmax(500px, 1fr);
+}
+
 .server-rail {
   background: #1a1b1e;
   padding: 10px;

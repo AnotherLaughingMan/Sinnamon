@@ -23,6 +23,7 @@ The format follows Keep a Changelog and this project is currently pre-release.
 - Expanded Matrix timeline parsing and UI rendering beyond plain text to support `m.notice`, `m.emote`, `m.image`, and `m.file` message types with unsupported-type fallback handling.
 - Updated room-read behavior to publish Matrix `m.read` receipts for the active room's latest event and deduplicate repeated receipt submissions.
 - Implemented composer send flow with optimistic timeline updates, Matrix send API integration, Enter-to-send behavior, and send-button loading guardrails.
+- Added member panel toggle behavior in the chat header and responsive layout switching between three-column and four-column shell modes.
 - Removed `LICENSE.md` from the repository; canonical license file remains `LICENSE`.
 - Updated project engineering guidance to require building and validating both Debug and Release variants for completed implementation changes.
 - Updated engineering guidance to require a professional automated testing suite and to run/pass relevant tests before Debug and Release build validation.
