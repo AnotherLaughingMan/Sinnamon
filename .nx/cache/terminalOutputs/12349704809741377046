@@ -1,0 +1,21 @@
+[2m> [22mvite build
+
+node:internal/modules/esm/resolve:275
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Projects\TS\Sinnamon\node_modules\rolldown\node_modules\@rolldown\pluginutils\dist\index.js' imported from C:\Projects\TS\Sinnamon\node_modules\rolldown\dist\shared\bindingify-input-options-e7ze4hPR.mjs
+[90m    at finalizeResolution (node:internal/modules/esm/resolve:275:11)[39m
+[90m    at moduleResolve (node:internal/modules/esm/resolve:932:10)[39m
+[90m    at defaultResolve (node:internal/modules/esm/resolve:1056:11)[39m
+[90m    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:654:12)[39m
+[90m    at #cachedDefaultResolve (node:internal/modules/esm/loader:603:25)[39m
+[90m    at ModuleLoader.resolve (node:internal/modules/esm/loader:586:38)[39m
+[90m    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:242:38)[39m
+[90m    at ModuleJob._link (node:internal/modules/esm/module_job:135:49)[39m {
+  code: [32m'ERR_MODULE_NOT_FOUND'[39m,
+  url: [32m'file:///C:/Projects/TS/Sinnamon/node_modules/rolldown/node_modules/@rolldown/pluginutils/dist/index.js'[39m
+}
+
+Node.js v22.12.0
+Warning: command "vite build" exited with non-zero status code

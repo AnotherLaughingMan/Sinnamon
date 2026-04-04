@@ -1,73 +1,113 @@
 {
-  "name": "sinnamon",
+  "name": "sinnamon-monorepo",
   "private": true,
-  "version": "0.3.0",
-  "description": "Sinnamon Matrix client",
+  "version": "0.4.0-dev",
+  "description": "Sinnamon Matrix client monorepo (web + desktop)",
   "author": "AnotherLaughingMan <AnotherLaughingMan@users.noreply.github.com>",
-  "main": "electron/main.cjs",
-  "type": "module",
-  "scripts": {
-    "dev": "concurrently -k \"npm:dev:web\" \"npm:dev:electron\"",
-    "dev:web": "vite",
-    "dev:electron": "wait-on tcp:5173 && electron .",
-    "dev:mock-matrix": "node scripts/mock-matrix-server.mjs",
-    "start": "electron .",
-    "build": "npm run build:web",
-    "build:web": "tsc -b && vite build",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "package:debug": "npm run build:web && electron-builder --dir --config.directories.output=release/debug",
-    "package:release": "npm run build:web && electron-builder --win nsis --publish never --config.directories.output=release/release",
-    "preview": "vite preview"
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319",
+  "engines": {
+    "node": ">=22.12"
   },
-  "dependencies": {
-    "dompurify": "^3.3.3",
-    "lucide-react": "^1.7.0",
-    "matrix-js-sdk": "^41.3.0-rc.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@types/dompurify": "^3.0.5",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.1",
-    "concurrently": "^9.2.1",
-    "electron": "^33.2.1",
-    "electron-builder": "^25.1.8",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.11",
-    "vitest": "^4.1.2",
-    "wait-on": "^8.0.1"
-  },
-  "build": {
-    "appId": "com.sinnamon.client",
-    "productName": "Sinnamon",
-    "copyright": "Copyright © 2026 Sinnamon Contributors",
-    "asar": true,
-    "files": [
-      "dist/**/*",
-      "electron/**/*",
-      "package.json"
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "matrix-js-sdk",
+      "electron"
     ],
-    "directories": {
-      "buildResources": "build"
+    "ignoredBuiltDependencies": [
+      "@sentry/cli",
+      "nx"
+    ],
+    "patchedDependencies": {
+      "@vector-im/matrix-wysiwyg": "patches/@vector-im__matrix-wysiwyg.patch",
+      "react-blurhash": "patches/react-blurhash.patch",
+      "linkify-html": "patches/linkify-html.patch",
+      "@matrix-org/react-sdk-module-api": "patches/@matrix-org__react-sdk-module-api.patch",
+      "@types/auto-launch": "patches/@types__auto-launch.patch",
+      "@types/mdx": "patches/@types__mdx.patch",
+      "await-lock": "patches/await-lock.patch",
+      "jest-fixed-jsdom": "patches/jest-fixed-jsdom.patch",
+      "jsdom": "patches/jsdom.patch",
+      "rollup": "patches/rollup.patch",
+      "postcss-mixins": "patches/postcss-mixins.patch",
+      "app-builder-lib": "patches/app-builder-lib.patch"
     },
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
-      ]
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "react": "19",
+        "react-dom": "19",
+        "eslint": "8"
+      }
     },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+    "allowedDeprecatedVersions": {
+      "eslint": "8",
+      "react-beautiful-dnd": "13"
+    },
+    "overrides": {
+      "pretty-format@30>react-is": "19.2.4",
+      "@types/react": "catalog:",
+      "@types/react-dom": "catalog:",
+      "oidc-client-ts": "3.5.0",
+      "jwt-decode": "4.0.0",
+      "caniuse-lite": "1.0.30001780",
+      "markdown-it": "14.1.1",
+      "testcontainers": "^11.0.0",
+      "matrix-widget-api": "^1.17.0",
+      "qs": "6.15.0",
+      "serialize-javascript": "7.0.5",
+      "atomically": "2.1.1",
+      "@types/node": "18.19.130",
+      "config-file-ts": "0.2.8-rc1",
+      "node-abi": "4.27.0",
+      "@types/pg-pool": "2.0.7",
+      "flatted@3.4.1": "3.4.2",
+      "ajv@6.12.6": "6.14.0",
+      "ajv@>=8 <8.18.0": "8.18.0",
+      "bn.js@4.12.2": "4.12.3",
+      "bn.js@5.2.2": "5.2.3",
+      "brace-expansion@1.1.12": "1.1.13",
+      "brace-expansion@2.0.2": "2.0.3",
+      "brace-expansion@5.0.4": "5.0.5",
+      "handlebars@4.7.8": "4.7.9",
+      "path-to-regexp@0.1.12": "0.1.13",
+      "path-to-regexp@8.3.0": "8.4.0",
+      "picomatch@2.3.1": "2.3.2",
+      "picomatch@4.0": "4.0.4",
+      "rollup@4.57.1": "4.59.0",
+      "smol-toml@1.6.0": "1.6.1",
+      "svgo@3.3.2": "3.3.3",
+      "svgo@4.0.0": "4.0.1",
+      "underscore@1.13.7": "1.13.8",
+      "yaml@1.10.2": "1.10.3",
+      "yaml@2.8.2": "2.8.3",
+      "undici@7.22.2": "7.24.0",
+      "@xmldom/xmldom@0.8.11": "0.8.12",
+      "esbuild@<=0.24.2": ">=0.25.0",
+      "minimatch@>=10.0.0 <10.2.3": ">=10.2.3"
     }
+  },
+  "type": "module",
+  "devDependencies": {
+    "@nx-tools/nx-container": "^7.2.1",
+    "@nx/jest": "^22.5.0",
+    "@rolldown/pluginutils": "1.0.0-rc.12",
+    "nx": "22.5.4",
+    "typescript": "5.8.2"
+  },
+  "scripts": {
+    "status": "echo \"Sinnamon monorepo scaffold ready (apps/web + apps/desktop).\"",
+    "fix:matrix-sdk-types": "node scripts/fix-matrix-sdk-dts.mjs",
+    "dev:web": "pnpm --filter sinnamon-web start",
+    "dev:desktop": "pnpm --filter sinnamon-desktop start",
+    "dev": "pnpm dev:web",
+    "typecheck:web": "npm run fix:matrix-sdk-types && pnpm --filter sinnamon-web run lint:types",
+    "typecheck:desktop": "pnpm --filter sinnamon-desktop run lint:types",
+    "build:web": "pnpm --filter sinnamon-web build",
+    "build:desktop": "pnpm --filter sinnamon-desktop build",
+    "build": "pnpm build:web",
+    "test:web": "pnpm --filter sinnamon-web test",
+    "test:desktop": "pnpm --filter sinnamon-desktop test",
+    "test": "pnpm test:web",
+    "package:debug": "pnpm --filter sinnamon-desktop run build:64",
+    "package:release": "pnpm --filter sinnamon-desktop run build"
   }
 }

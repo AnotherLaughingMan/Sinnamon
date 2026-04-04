@@ -1,0 +1,32 @@
+{
+  "run": {
+    "command": "nx lint:types",
+    "startTime": "2026-04-04T19:28:34.353Z",
+    "endTime": "2026-04-04T19:29:07.404Z",
+    "inner": false
+  },
+  "tasks": [
+    {
+      "taskId": "@element-hq/web-shared-components:build",
+      "target": "build",
+      "projectName": "@element-hq/web-shared-components",
+      "hash": "13040737254972749736",
+      "startTime": "2026-04-04T19:28:34.377Z",
+      "endTime": "2026-04-04T19:28:34.385Z",
+      "params": "",
+      "cacheStatus": "local-cache-hit",
+      "status": 0
+    },
+    {
+      "taskId": "sinnamon-web:lint:types",
+      "target": "lint:types",
+      "projectName": "sinnamon-web",
+      "hash": "8251208142334196418",
+      "startTime": "2026-04-04T19:28:34.388Z",
+      "endTime": "2026-04-04T19:29:07.404Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 0
+    }
+  ]
+}

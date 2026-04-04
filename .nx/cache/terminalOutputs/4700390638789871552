@@ -1,0 +1,28 @@
+[2m> [22mvite build
+
+[36mvite v8.0.3 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...[32m✓[39m 1157 modules transformed.
+rendering chunks...
+
+[vite:dts] Start generate declaration files...
+[vite:dts] Start rollup declaration files...
+Analysis will use the bundled TypeScript version 5.8.2
+*** The target project appears to use TypeScript 6.0.2 which is newer than the bundled compiler engine; consider upgrading API Extractor.
+[vite:dts] Declaration files built in 5055ms.
+
+computing gzip size...
+[2mdist/[0m[35melement-web-shared-components.css  [39m[2m[1m 65.90 kB[0m[0m[2m │ gzip:  11.40 kB[0m
+[2mdist/[0m[36melement-web-shared-components.js   [39m[2m[1m487.06 kB[0m[0m[2m │ gzip: 131.94 kB[0m
+
+[33m[33m[PLUGIN_TIMINGS] Warning:[0m Your build spent significant time in plugins. Here is a breakdown:
+  - vite:dts (76%)
+  - vite:css (16%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+[39m
+[2Ktransforming...[32m✓[39m 1157 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[0m[35melement-web-shared-components.css      [39m[2m[1m 65.90 kB[0m[0m[2m │ gzip:  11.40 kB[0m
+[2mdist/[0m[36melement-web-shared-components.umd.cjs  [39m[2m[1m366.96 kB[0m[0m[2m │ gzip: 119.16 kB[0m
+
+[32m✓ built in 5.64s[39m

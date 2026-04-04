@@ -1,0 +1,18 @@
+[2m> [22mvite build
+
+[31mfailed to load config from C:\Projects\TS\Sinnamon\packages\shared-components\vite.config.ts[39m
+[31merror during build:
+file:///C:/Projects/TS/Sinnamon/packages/shared-components/node_modules/.vite-temp/vite.config.ts.timestamp-1775329917946-785e45051a9f2.mjs:4
+import { defineConfig, esmExternalRequirePlugin } from "file:///C:/Projects/TS/Sinnamon/node_modules/vite/dist/node/index.js";
+                       ^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module 'file:///C:/Projects/TS/Sinnamon/node_modules/vite/dist/node/index.js' does not provide an export named 'esmExternalRequirePlugin'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:180:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:263:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:547:26)
+    at async loadConfigFromBundledFile (file:///C:/Projects/TS/Sinnamon/node_modules/vite/dist/node/chunks/config.js:35909:12)
+    at async bundleAndLoadConfigFile (file:///C:/Projects/TS/Sinnamon/node_modules/vite/dist/node/chunks/config.js:35797:17)
+    at async loadConfigFromFile (file:///C:/Projects/TS/Sinnamon/node_modules/vite/dist/node/chunks/config.js:35764:42)
+    at async resolveConfig (file:///C:/Projects/TS/Sinnamon/node_modules/vite/dist/node/chunks/config.js:35413:22)
+    at async createBuilder (file:///C:/Projects/TS/Sinnamon/node_modules/vite/dist/node/chunks/config.js:33875:19)
+    at async CAC.<anonymous> (file:///C:/Projects/TS/Sinnamon/node_modules/vite/dist/node/cli.js:629:10)[39m
+Warning: command "vite build" exited with non-zero status code
