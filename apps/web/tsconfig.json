@@ -13,6 +13,7 @@
         "sourceMap": false,
         "outDir": "./lib",
         "declaration": true,
+        "emitDeclarationOnly": true,
         "jsx": "react",
         "lib": ["es2022", "es2024.promise", "dom", "dom.iterable"],
         "strict": true,
