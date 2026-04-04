@@ -1,7 +1,7 @@
 {
   "name": "sinnamon",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Sinnamon Matrix client",
   "author": "AnotherLaughingMan <AnotherLaughingMan@users.noreply.github.com>",
   "main": "electron/main.cjs",
@@ -10,6 +10,7 @@
     "dev": "concurrently -k \"npm:dev:web\" \"npm:dev:electron\"",
     "dev:web": "vite",
     "dev:electron": "wait-on tcp:5173 && electron .",
+    "dev:mock-matrix": "node scripts/mock-matrix-server.mjs",
     "start": "electron .",
     "build": "npm run build:web",
     "build:web": "tsc -b && vite build",
@@ -20,10 +21,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "dompurify": "^3.3.3",
+    "lucide-react": "^1.7.0",
+    "matrix-js-sdk": "^41.3.0-rc.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.1",

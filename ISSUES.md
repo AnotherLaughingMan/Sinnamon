@@ -70,8 +70,8 @@ User/business/technical impact.
 
 ## Tracker State
 
-- Next Issue ID: `SIN-0008`
-- Last Updated: `2026-03-03`
+- Next Issue ID: `SIN-0011`
+- Last Updated: `2026-04-03`
 
 ## Open
 
@@ -267,7 +267,122 @@ Reduced usability and discoverability in room navigation.
 
 ## In Progress
 
-_No issues in progress._
+### SIN-0008 — Incremental sync polling can apply stale room/read state during session and room transitions
+
+- Type: bug
+- Priority: p0
+- Severity: critical
+- Area: state
+- Status: in-progress
+- Reporter: @copilot
+- Assignee: unassigned
+- Created: 2026-04-03
+- Updated: 2026-04-03
+- Links: src/state/useMatrixViewState.ts
+
+**Summary**
+The incremental sync loop captured mutable view state in closures (selected room and retry sleep lifecycle), allowing stale room/read behavior and delayed cancellation during account or room transitions.
+
+**Steps to Reproduce**
+
+1. Connect to Matrix and start incremental polling.
+2. Rapidly switch rooms while a sync retry cycle is active.
+3. Observe unread/read effects can be applied against stale room context.
+
+**Expected Behavior**
+Polling should only apply state using the latest active room and should cancel retry sleep immediately when session/poll lifecycle is torn down.
+
+**Impact**
+User-visible unread/read inconsistencies and elevated risk of stale state application under connection churn.
+
+**Acceptance Criteria**
+
+- [x] Polling read-state merges use current-room refs instead of stale closure values.
+- [x] Retry sleep can be canceled on cleanup to avoid hanging stale loops.
+- [ ] Add focused regression tests for room-switch + retry-cancel race behavior.
+
+**Progress Notes**
+
+- 2026-04-03: Issue logged from severe audit pass.
+- 2026-04-03: Implemented first mitigation (current-room ref + cancelable retry wait) in `useMatrixViewState`; test expansion still pending.
+
+### SIN-0009 — Missing-key recovery flow can run concurrently and produce ambiguous failure/session outcomes
+
+- Type: bug
+- Priority: p0
+- Severity: critical
+- Area: encryption
+- Status: in-progress
+- Reporter: @copilot
+- Assignee: unassigned
+- Created: 2026-04-03
+- Updated: 2026-04-03
+- Links: src/state/useMatrixViewState.ts; src/components/SettingsPanel.tsx
+
+**Summary**
+Recovery actions could overlap and lacked strict session-stability checks during long-running recovery/sync operations, causing ambiguous status outcomes under account/session changes.
+
+**Steps to Reproduce**
+
+1. Trigger missing-key recovery repeatedly while switching accounts/config.
+2. Let backup restore partially fail and sync refresh fail.
+3. Observe confusing or inconsistent state/error transitions.
+
+**Expected Behavior**
+Only one recovery run should be active, and session changes during recovery should fail deterministically with explicit user guidance.
+
+**Impact**
+Risk of misleading recovery state and difficult incident diagnosis for encrypted history recovery.
+
+**Acceptance Criteria**
+
+- [x] Concurrent recovery runs are prevented.
+- [x] Session fingerprint checks abort stale recovery runs.
+- [x] Sync failure after recovery attempt sets deterministic error state.
+- [ ] Add tests for session-switch during recovery.
+
+**Progress Notes**
+
+- 2026-04-03: Issue logged from severe audit pass.
+- 2026-04-03: Implemented in-flight guard + session fingerprint checks + deterministic error transitions.
+
+### SIN-0010 — Crypto client cache is not stable after account-store mismatch recovery
+
+- Type: bug
+- Priority: p1
+- Severity: high
+- Area: encryption
+- Status: in-progress
+- Reporter: @copilot
+- Assignee: unassigned
+- Created: 2026-04-03
+- Updated: 2026-04-03
+- Links: src/matrix/matrixCryptoService.ts; src/matrix/matrixCryptoService.test.ts
+
+**Summary**
+After rust-crypto account-store mismatch handling, the successfully reset client was not guaranteed to remain cached for subsequent operations, causing unnecessary re-creation and instability risk.
+
+**Steps to Reproduce**
+
+1. Trigger account-store mismatch path during crypto initialization.
+2. Execute sequential crypto operations requiring the same session.
+3. Observe client recreation instead of stable reuse.
+
+**Expected Behavior**
+Mismatch recovery should return and cache a stable client instance for subsequent operations.
+
+**Impact**
+Increased initialization churn and elevated risk of inconsistent crypto operation behavior.
+
+**Acceptance Criteria**
+
+- [x] Recovered client is cached after successful mismatch reset path.
+- [x] Regression test verifies no extra client recreation on subsequent operations.
+
+**Progress Notes**
+
+- 2026-04-03: Issue logged from severe audit pass.
+- 2026-04-03: Implemented cache stabilization and added regression test.
 
 ## Blocked
 

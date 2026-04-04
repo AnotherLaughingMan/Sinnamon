@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { MAX_MESSAGES_PER_ROOM, MAX_MESSAGES_TOTAL } from '../matrix/retention';
 import type { RoomSummary, TimelineMessage } from '../matrix/types';
-import { markActiveRoomRead, mergeMessages, mergeRooms, trimMessages } from './matrixViewStateUtils';
+import { dedupeRooms, markActiveRoomRead, mergeMessages, mergeRooms, trimMessages } from './matrixViewStateUtils';
 
 function makeMessage(id: string, roomId: string, timestamp: number): TimelineMessage {
   return {
@@ -17,34 +17,60 @@ function makeMessage(id: string, roomId: string, timestamp: number): TimelineMes
 describe('matrixViewStateUtils', () => {
   it('marks active room as read without mutating others', () => {
     const rooms: RoomSummary[] = [
-      { id: '!a:hs', name: 'a', unreadCount: 3 },
-      { id: '!b:hs', name: 'b', unreadCount: 2 },
+      { id: '!a:hs', name: 'a', topic: '', isDirect: false, isEncrypted: false, unreadCount: 3 },
+      { id: '!b:hs', name: 'b', topic: '', isDirect: true, isEncrypted: false, unreadCount: 2 },
     ];
 
     const result = markActiveRoomRead(rooms, '!b:hs');
 
     expect(result).toEqual([
-      { id: '!a:hs', name: 'a', unreadCount: 3 },
-      { id: '!b:hs', name: 'b', unreadCount: 0 },
+      { id: '!a:hs', name: 'a', topic: '', isDirect: false, isEncrypted: false, unreadCount: 3 },
+      { id: '!b:hs', name: 'b', topic: '', isDirect: true, isEncrypted: false, unreadCount: 0 },
     ]);
   });
 
   it('merges rooms by id and keeps latest room payload', () => {
     const previousRooms: RoomSummary[] = [
-      { id: '!a:hs', name: 'A', unreadCount: 1 },
-      { id: '!b:hs', name: 'B', unreadCount: 0 },
+      { id: '!a:hs', name: 'A', topic: '', isDirect: false, isEncrypted: false, unreadCount: 1 },
+      { id: '!b:hs', name: 'B', topic: '', isDirect: true, isEncrypted: false, unreadCount: 0 },
     ];
     const nextRooms: RoomSummary[] = [
-      { id: '!b:hs', name: 'B renamed', unreadCount: 5 },
-      { id: '!c:hs', name: 'C', unreadCount: 1 },
+      { id: '!b:hs', name: 'B renamed', topic: '', isDirect: true, isEncrypted: true, unreadCount: 5 },
+      { id: '!c:hs', name: 'C', topic: '', isDirect: false, isEncrypted: false, unreadCount: 1 },
     ];
 
     const result = mergeRooms(previousRooms, nextRooms);
 
     expect(result).toEqual([
-      { id: '!a:hs', name: 'A', unreadCount: 1 },
-      { id: '!b:hs', name: 'B renamed', unreadCount: 5 },
-      { id: '!c:hs', name: 'C', unreadCount: 1 },
+      { id: '!a:hs', name: 'A', topic: '', isDirect: false, isEncrypted: false, unreadCount: 1 },
+      { id: '!b:hs', name: 'B renamed', topic: '', isDirect: true, isEncrypted: true, unreadCount: 5 },
+      { id: '!c:hs', name: 'C', topic: '', isDirect: false, isEncrypted: false, unreadCount: 1 },
+    ]);
+  });
+
+  it('preserves stable name and non-direct classification when sparse updates only provide fallback room id', () => {
+    const previousRooms: RoomSummary[] = [
+      { id: '!room:hs', name: 'General Chat', topic: 'Space talk', isDirect: false, isEncrypted: true, unreadCount: 1 },
+    ];
+    const nextRooms: RoomSummary[] = [
+      { id: '!room:hs', name: '!room:hs', topic: '', isDirect: true, isEncrypted: false, unreadCount: 4 },
+    ];
+
+    const result = mergeRooms(previousRooms, nextRooms);
+
+    expect(result).toEqual([
+      { id: '!room:hs', name: 'General Chat', topic: 'Space talk', isDirect: false, isEncrypted: true, unreadCount: 4 },
+    ]);
+  });
+
+  it('dedupes repeated room ids in the same payload', () => {
+    const result = dedupeRooms([
+      { id: '!room:hs', name: 'General Chat', topic: '', isDirect: false, isEncrypted: true, unreadCount: 1 },
+      { id: '!room:hs', name: '!room:hs', topic: '', isDirect: true, isEncrypted: false, unreadCount: 2 },
+    ]);
+
+    expect(result).toEqual([
+      { id: '!room:hs', name: 'General Chat', topic: '', isDirect: false, isEncrypted: true, unreadCount: 2 },
     ]);
   });
 

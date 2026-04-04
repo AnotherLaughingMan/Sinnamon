@@ -46,6 +46,18 @@ Run development server:
 npm run dev
 ```
 
+Run local Matrix mock server (for testing without real server credentials):
+
+```bash
+npm run dev:mock-matrix
+```
+
+Use these in Settings for local testing:
+
+- Homeserver URL: `http://127.0.0.1:8787`
+- Username: `@tester:local`
+- Password: any value
+
 Run Electron directly (uses built assets when packaged, dev server in development):
 
 ```bash
