@@ -4,6 +4,7 @@
         "allowImportingTsExtensions": true,
         "jsx": "preserve",
         "declaration": false,
+        "emitDeclarationOnly": false,
         "outDir": "./lib/module_system",
         "lib": ["es2022"],
         "types": ["node"]
