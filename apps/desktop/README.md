@@ -1,9 +1,5 @@
 ![Build](https://github.com/vector-im/element-desktop/actions/workflows/build_desktop_and_deploy.yaml/badge.svg)
 ![Static Analysis](https://github.com/vector-im/element-desktop/actions/workflows/static_analysis.yaml/badge.svg)
-[![Localazy](https://img.shields.io/endpoint?url=https%3A%2F%2Fconnect.localazy.com%2Fstatus%2Felement-web%2Fdata%3Fcontent%3Dall%26title%3Dlocalazy%26logo%3Dtrue)](https://localazy.com/p/element-web)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=element-desktop&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=element-desktop)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=element-desktop&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=element-desktop)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=element-desktop&metric=bugs)](https://sonarcloud.io/summary/new_code?id=element-desktop)
 
 # Element Desktop
 
@@ -79,20 +75,6 @@ This will do a couple of things:
 - Run electron-builder to build a package. The package built will match the operating system
   you're running the build process on.
 
-## Docker
-
-Alternatively, you can also build using docker, which will always produce the linux package:
-
-```
-# Run this once to make the docker image
-pnpm run docker:setup
-
-pnpm run docker:install
-# if you want to build the native modules (this will take a while)
-pnpm run docker:build:native
-pnpm run docker:build
-```
-
 After running, the packages should be in `dist/`.
 
 # Starting
@@ -115,8 +97,7 @@ cp /path/to/my/config.json myconfig/
 pnpm run fetch --cfgdir myconfig
 ```
 
-The config dir for the official Element app is in `element.io`. If you use this,
-your app will auto-update itself using builds from element.io.
+The project variant config dir is `sinnamon`.
 
 # Profiles
 

@@ -10,8 +10,17 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@sentry/cli",
+      "nx",
+      "core-js",
+      "cpu-features",
+      "electron",
+      "electron-winstaller",
+      "esbuild",
       "matrix-js-sdk",
-      "electron"
+      "protobufjs",
+      "ssh2",
+      "unrs-resolver"
     ],
     "ignoredBuiltDependencies": [
       "@sentry/cli",
@@ -97,8 +106,9 @@
     "status": "echo \"Sinnamon monorepo scaffold ready (apps/web + apps/desktop).\"",
     "fix:matrix-sdk-types": "node scripts/fix-matrix-sdk-dts.mjs",
     "dev:web": "pnpm --filter sinnamon-web start",
-    "dev:desktop": "pnpm --filter sinnamon-desktop start",
-    "dev": "pnpm dev:web",
+    "stage:webapp:desktop": "node apps/desktop/scripts/link-webapp.mjs",
+    "dev:desktop": "pnpm build:web && pnpm stage:webapp:desktop && pnpm --filter sinnamon-desktop start",
+    "dev": "pnpm dev:desktop",
     "typecheck:web": "npm run fix:matrix-sdk-types && pnpm --filter sinnamon-web run lint:types",
     "typecheck:desktop": "pnpm --filter sinnamon-desktop run lint:types",
     "build:web": "pnpm --filter sinnamon-web build",

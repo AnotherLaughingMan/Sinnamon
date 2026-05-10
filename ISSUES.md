@@ -1,19 +1,15 @@
 # Issues Register
 
-This file tracks bugs, defects, technical debt, UX gaps, and operational issues for Sinnamon.
+This file tracks active defects, feature gaps, and technical debt for the rebuilt Sinnamon client baseline.
+
+The previous issue register referenced a pre-rebuild client architecture and has been intentionally replaced.
 
 ## Tracking Rules
 
 - Every issue must have a unique serialized ID: `SIN-0001`, `SIN-0002`, `SIN-0003`, etc.
-- IDs are never reused, even if an issue is removed or merged.
-- Create new issues by incrementing the `Next Issue ID` value below.
-- Keep issue records immutable except for status, assignee, links, and progress notes.
-
-## Issue ID Serialization
-
-- Prefix: `SIN`
-- Format: `SIN-####` (4 digits, zero-padded)
-- Examples: `SIN-0001`, `SIN-0142`, `SIN-1024`
+- IDs are never reused, even when issues are resolved or removed from active sections.
+- New issues increment `Next Issue ID`.
+- Preserve issue history in progress notes; do not rewrite prior notes.
 
 ## Required Tags
 
@@ -22,12 +18,12 @@ Each issue must include all required tags:
 - `Type`: `bug` | `feature-gap` | `tech-debt` | `performance` | `security` | `ux` | `docs` | `infra`
 - `Priority`: `p0` | `p1` | `p2` | `p3`
 - `Severity`: `critical` | `high` | `medium` | `low`
-- `Area`: `ui` | `matrix-sync` | `encryption` | `settings` | `state` | `build` | `docs` | `testing`
+- `Area`: `ui` | `matrix-sync` | `encryption` | `settings` | `state` | `build` | `docs` | `testing` | `desktop`
 - `Status`: `open` | `in-progress` | `blocked` | `resolved` | `closed`
 
-## Metadata Standard
+## Metadata Template
 
-Use this metadata block for every issue:
+Use this structure for each issue:
 
 ```md
 ### SIN-0001 — Short Issue Title
@@ -41,16 +37,16 @@ Use this metadata block for every issue:
 - Assignee: unassigned
 - Created: YYYY-MM-DD
 - Updated: YYYY-MM-DD
-- Links: (PR/commit/design/doc links)
+- Links: path/to/file.ts; path/to/other.ts
 
 **Summary**
 One concise paragraph describing the issue.
 
 **Steps to Reproduce**
 
-1. Step one
-2. Step two
-3. Observed result
+1. Step one.
+2. Step two.
+3. Observed result.
 
 **Expected Behavior**
 What should happen.
@@ -70,319 +66,132 @@ User/business/technical impact.
 
 ## Tracker State
 
-- Next Issue ID: `SIN-0011`
-- Last Updated: `2026-04-03`
+- Baseline Reset Date: `2026-04-04`
+- Next Issue ID: `SIN-0006`
+- Last Updated: `2026-04-04`
 
 ## Open
 
-### SIN-0001 — Matrix access token stored in local storage without hardening
-
-- Type: security
-- Priority: p1
-- Severity: high
-- Area: settings
-- Status: open
-- Reporter: @copilot
-- Assignee: unassigned
-- Created: 2026-03-03
-- Updated: 2026-03-03
-- Links: src/App.tsx
-
-**Summary**
-The Matrix access token is persisted in browser local storage, which increases exposure risk for token theft on compromised clients.
-
-**Steps to Reproduce**
-
-1. Open Settings and save a valid access token.
-2. Open browser dev tools storage inspector.
-3. Observe token is stored as plain text under app storage keys.
-
-**Expected Behavior**
-Sensitive tokens should use safer storage patterns and explicit session controls.
-
-**Impact**
-Potential account compromise if local storage is accessed by malicious scripts or shared workstation users.
-
-**Acceptance Criteria**
-
-- [ ] Storage strategy for access tokens is documented with threat model tradeoffs.
-- [ ] Token handling supports safer defaults (session scope or encrypted-at-rest strategy where feasible).
-- [ ] UI includes explicit “remember me” behavior instead of implicit persistent storage.
-
-**Progress Notes**
-
-- 2026-03-03: Issue logged from architecture review.
-
-### SIN-0004 — Timeline parser excludes non-text events needed for core chat parity
+### SIN-0003 — Discord-like shell layout is not implemented on rebuilt baseline
 
 - Type: feature-gap
-- Priority: p2
-- Severity: medium
-- Area: matrix-sync
-- Status: open
+- Priority: p1
+- Severity: high
+- Area: ui
+- Status: in-progress
 - Reporter: @copilot
 - Assignee: unassigned
-- Created: 2026-03-03
-- Updated: 2026-03-03
-- Links: src/matrix/matrixService.ts
+- Created: 2026-04-04
+- Updated: 2026-04-04
+- Links: apps/web/src/components/structures/LoggedInView.tsx; .github/copilot-instructions.md
 
 **Summary**
-Current sync mapping only accepts `m.room.message` with `msgtype=m.text`; media, emote, notice, reply metadata, and edits are ignored.
+Current logged-in experience retains the Element layout rather than the required Sinnamon Discord-style shell.
 
 **Steps to Reproduce**
 
-1. Open a room containing image/sticker/reply/edit events.
-2. Sync room timeline in Sinnamon.
-3. Observe only plain text messages appear.
+1. Launch and sign in.
+2. Observe the logged-in layout structure.
+3. Compare against required server rail + channel sidebar + timeline + optional right panel + bottom composer target.
 
 **Expected Behavior**
-Timeline should gracefully represent common message variants and relation metadata.
+Logged-in shell should match the approved Discord-like spatial model.
 
 **Impact**
-Conversation context is incomplete and diverges from user expectations for modern chat UX.
+Primary product differentiation is not yet visible.
 
 **Acceptance Criteria**
 
-- [ ] Message model includes common msgtypes and relation metadata.
-- [ ] Unsupported events render with safe fallback instead of being silently dropped.
-- [ ] Parsing behavior documented for supported/unsupported event types.
+- [ ] Dedicated server rail exists as first column.
+- [ ] Channel/room list column is distinct from main timeline.
+- [ ] Main timeline and composer occupy primary central area.
+- [ ] Optional right panel placeholder can be enabled without layout breakage.
 
 **Progress Notes**
 
-- 2026-03-03: Issue logged from timeline parser review.
+- 2026-04-04: Issue created from implementation gap review.
+- 2026-04-04: Added initial `SinnamonLayout` shell behind config flag `sinnamon_discord_layout` in `LoggedInView`; layout now supports server rail, channel sidebar, and main timeline regions with responsive grid sizing.
+- 2026-04-04: Added dedicated `ServerRail` and `ChannelSidebar` wrapper components around `SpacePanel` and `LeftPanel`, giving the shell Sinnamon-owned structural surfaces for further Discord-style refinement.
 
-### SIN-0005 — Poll requests are not abortable on teardown/config change
-
-- Type: performance
-- Priority: p2
-- Severity: medium
-- Area: matrix-sync
-- Status: open
-- Reporter: @copilot
-- Assignee: unassigned
-- Created: 2026-03-03
-- Updated: 2026-03-03
-- Links: src/state/useMatrixViewState.ts; src/matrix/matrixService.ts
-
-**Summary**
-Polling loop relies on a cancellation flag but does not abort in-flight fetch requests, which can leave long-poll requests running during unmount or rapid config changes.
-
-**Steps to Reproduce**
-
-1. Connect and start long-poll incremental sync.
-2. Rapidly switch config or navigate away/unmount component.
-3. Observe in-flight requests continue until timeout.
-
-**Expected Behavior**
-In-flight poll requests should be aborted immediately when no longer relevant.
-
-**Impact**
-Wasted network resources and potential stale update races.
-
-**Acceptance Criteria**
-
-- [ ] Polling uses `AbortController` (or equivalent) for request cancellation.
-- [ ] Teardown and config changes abort pending requests deterministically.
-- [ ] No stale response applies state after cancellation.
-
-**Progress Notes**
-
-- 2026-03-03: Issue logged from lifecycle behavior review.
-
-### SIN-0006 — Local unread clearing can diverge from server unread/read-receipt state
-
-- Type: bug
-- Priority: p2
-- Severity: medium
-- Area: state
-- Status: open
-- Reporter: @copilot
-- Assignee: unassigned
-- Created: 2026-03-03
-- Updated: 2026-03-03
-- Links: src/state/useMatrixViewState.ts
-
-**Summary**
-Unread count for the active room is forcibly zeroed in local state without publishing read receipts, which can diverge from true server-side unread state.
-
-**Steps to Reproduce**
-
-1. Receive unread messages in a room.
-2. Open the room in Sinnamon.
-3. Observe unread badge clears locally even without explicit read receipt sync.
-
-**Expected Behavior**
-Unread presentation should align with acknowledged read semantics and server state.
-
-**Impact**
-Badge inconsistencies across clients and potential confusion for users.
-
-**Acceptance Criteria**
-
-- [ ] Unread-clearing strategy is defined (local optimistic vs server-confirmed).
-- [ ] If optimistic, reconciliation logic corrects mismatches on subsequent sync.
-- [ ] Behavior is documented for multi-client scenarios.
-
-**Progress Notes**
-
-- 2026-03-03: Issue logged from unread-state edge-case review.
-
-### SIN-0007 — Room title fallback can expose raw room IDs during limited/incremental state
+### SIN-0004 — Tooltip coverage for actionable icon controls is below project requirement
 
 - Type: ux
-- Priority: p3
-- Severity: low
+- Priority: p2
+- Severity: medium
 - Area: ui
 - Status: open
 - Reporter: @copilot
 - Assignee: unassigned
-- Created: 2026-03-03
-- Updated: 2026-03-03
-- Links: src/matrix/matrixService.ts
+- Created: 2026-04-04
+- Updated: 2026-04-04
+- Links: .github/copilot-instructions.md; apps/web/src/components/
 
 **Summary**
-When name/canonical alias/heroes are unavailable in incremental or limited state snapshots, room label falls back to raw room ID, reducing readability.
+Project directive requires near-universal tooltip coverage for actionable controls, but current rebuilt baseline has inconsistent tooltip behavior and no unified scaffold for new Sinnamon UI surfaces.
 
 **Steps to Reproduce**
 
-1. Join/sync rooms where state events are partial or delayed.
-2. Load room list.
-3. Observe raw Matrix room IDs displayed as names.
+1. Navigate primary app surfaces (space controls, room actions, header actions).
+2. Hover actionable icons.
+3. Observe missing or inconsistent tooltip behavior across controls.
 
 **Expected Behavior**
-UI should preserve a user-friendly fallback naming strategy and recover display names when state arrives.
+Actionable controls should expose clear, consistent tooltips with accessible interaction behavior.
 
 **Impact**
-Reduced usability and discoverability in room navigation.
+Reduced discoverability and accessibility for power and first-time users.
 
 **Acceptance Criteria**
 
-- [ ] Friendly fallback naming strategy is defined for unknown rooms.
-- [ ] Late-arriving state updates room titles without requiring full reconnect.
-- [ ] Raw room IDs are minimized in visible room list UX.
+- [ ] A shared tooltip primitive/provider is defined for Sinnamon UI work.
+- [ ] New server rail and sidebar controls include tooltips.
+- [ ] Existing high-frequency icon controls are audited for tooltip coverage.
 
 **Progress Notes**
 
-- 2026-03-03: Issue logged from room labeling edge-case review.
+- 2026-04-04: Issue created from UX directive compliance review.
 
-## In Progress
+### SIN-0005 — Encryption/key recovery behavior parity audit against reference implementation is incomplete
 
-### SIN-0008 — Incremental sync polling can apply stale room/read state during session and room transitions
-
-- Type: bug
-- Priority: p0
-- Severity: critical
-- Area: state
-- Status: in-progress
-- Reporter: @copilot
-- Assignee: unassigned
-- Created: 2026-04-03
-- Updated: 2026-04-03
-- Links: src/state/useMatrixViewState.ts
-
-**Summary**
-The incremental sync loop captured mutable view state in closures (selected room and retry sleep lifecycle), allowing stale room/read behavior and delayed cancellation during account or room transitions.
-
-**Steps to Reproduce**
-
-1. Connect to Matrix and start incremental polling.
-2. Rapidly switch rooms while a sync retry cycle is active.
-3. Observe unread/read effects can be applied against stale room context.
-
-**Expected Behavior**
-Polling should only apply state using the latest active room and should cancel retry sleep immediately when session/poll lifecycle is torn down.
-
-**Impact**
-User-visible unread/read inconsistencies and elevated risk of stale state application under connection churn.
-
-**Acceptance Criteria**
-
-- [x] Polling read-state merges use current-room refs instead of stale closure values.
-- [x] Retry sleep can be canceled on cleanup to avoid hanging stale loops.
-- [ ] Add focused regression tests for room-switch + retry-cancel race behavior.
-
-**Progress Notes**
-
-- 2026-04-03: Issue logged from severe audit pass.
-- 2026-04-03: Implemented first mitigation (current-room ref + cancelable retry wait) in `useMatrixViewState`; test expansion still pending.
-
-### SIN-0009 — Missing-key recovery flow can run concurrently and produce ambiguous failure/session outcomes
-
-- Type: bug
-- Priority: p0
-- Severity: critical
-- Area: encryption
-- Status: in-progress
-- Reporter: @copilot
-- Assignee: unassigned
-- Created: 2026-04-03
-- Updated: 2026-04-03
-- Links: src/state/useMatrixViewState.ts; src/components/SettingsPanel.tsx
-
-**Summary**
-Recovery actions could overlap and lacked strict session-stability checks during long-running recovery/sync operations, causing ambiguous status outcomes under account/session changes.
-
-**Steps to Reproduce**
-
-1. Trigger missing-key recovery repeatedly while switching accounts/config.
-2. Let backup restore partially fail and sync refresh fail.
-3. Observe confusing or inconsistent state/error transitions.
-
-**Expected Behavior**
-Only one recovery run should be active, and session changes during recovery should fail deterministically with explicit user guidance.
-
-**Impact**
-Risk of misleading recovery state and difficult incident diagnosis for encrypted history recovery.
-
-**Acceptance Criteria**
-
-- [x] Concurrent recovery runs are prevented.
-- [x] Session fingerprint checks abort stale recovery runs.
-- [x] Sync failure after recovery attempt sets deterministic error state.
-- [ ] Add tests for session-switch during recovery.
-
-**Progress Notes**
-
-- 2026-04-03: Issue logged from severe audit pass.
-- 2026-04-03: Implemented in-flight guard + session fingerprint checks + deterministic error transitions.
-
-### SIN-0010 — Crypto client cache is not stable after account-store mismatch recovery
-
-- Type: bug
+- Type: tech-debt
 - Priority: p1
 - Severity: high
 - Area: encryption
-- Status: in-progress
+- Status: open
 - Reporter: @copilot
 - Assignee: unassigned
-- Created: 2026-04-03
-- Updated: 2026-04-03
-- Links: src/matrix/matrixCryptoService.ts; src/matrix/matrixCryptoService.test.ts
+- Created: 2026-04-04
+- Updated: 2026-04-04
+- Links: docs/E2EE-IMPLEMENTATION-BASELINE.md; /memories/repo/crypto-import-notes.md
 
 **Summary**
-After rust-crypto account-store mismatch handling, the successfully reset client was not guaranteed to remain cached for subsequent operations, causing unnecessary re-creation and instability risk.
+Rebuild baseline needs an explicit parity audit to confirm key backup, recovery, secret storage, and device trust flows align with project encryption requirements.
 
 **Steps to Reproduce**
 
-1. Trigger account-store mismatch path during crypto initialization.
-2. Execute sequential crypto operations requiring the same session.
-3. Observe client recreation instead of stable reuse.
+1. Execute post-login setup and key recovery scenarios.
+2. Compare flow behavior to required reference guidance.
+3. Record mismatches in flow order, messaging, and recovery outcomes.
 
 **Expected Behavior**
-Mismatch recovery should return and cache a stable client instance for subsequent operations.
+Critical encryption and key recovery flows should be validated and tracked with explicit parity outcomes.
 
 **Impact**
-Increased initialization churn and elevated risk of inconsistent crypto operation behavior.
+Potential encrypted history recovery failures and user trust regressions.
 
 **Acceptance Criteria**
 
-- [x] Recovered client is cached after successful mismatch reset path.
-- [x] Regression test verifies no extra client recreation on subsequent operations.
+- [ ] Documented parity checklist for key backup/recovery and cross-signing flows.
+- [ ] Gaps tracked as discrete issues with reproducible steps.
+- [ ] Critical mismatches prioritized before release hardening.
 
 **Progress Notes**
 
-- 2026-04-03: Issue logged from severe audit pass.
-- 2026-04-03: Implemented cache stabilization and added regression test.
+- 2026-04-04: Issue created from E2EE baseline directive review.
+
+## In Progress
+
+_No in-progress issues._
 
 ## Blocked
 
@@ -390,90 +199,83 @@ _No blocked issues._
 
 ## Resolved / Closed
 
-### SIN-0002 — Connection state can report connected after repeated polling failures
+### SIN-0001 — Desktop build identity still uses Element metadata in packaged artifacts
 
 - Type: bug
-- Priority: p1
-- Severity: medium
-- Area: matrix-sync
+- Priority: p0
+- Severity: critical
+- Area: desktop
 - Status: resolved
 - Reporter: @copilot
 - Assignee: unassigned
-- Created: 2026-03-03
-- Updated: 2026-03-03
-- Links: src/state/useMatrixViewState.ts
+- Created: 2026-04-04
+- Updated: 2026-04-04
+- Links: apps/desktop/sinnamon/release/build.json; apps/desktop/sinnamon/release/config.json; apps/desktop/sinnamon/nightly/build.json; apps/desktop/sinnamon/nightly/config.json
 
 **Summary**
-On incremental sync errors, the poll loop set `error` and then flipped state back to `connected` after retry delay even if the next request had not succeeded.
+Desktop build metadata and config referenced Element naming and infrastructure, causing installer identity and runtime branding mismatch.
 
 **Steps to Reproduce**
 
-1. Connect to Matrix successfully.
-2. Simulate network outage or invalid token response during polling.
-3. Observe connection label can revert to connected before successful recovery.
+1. Build desktop package.
+2. Inspect generated app metadata and in-app branding.
+3. Observe Element naming/identifiers instead of Sinnamon.
 
 **Expected Behavior**
-Connection state should remain degraded until a confirmed successful sync response.
+All desktop build variants identify as Sinnamon and use Sinnamon-specific branding values.
 
 **Impact**
-Misleading status can hide outages and complicate debugging/reporting.
+Incorrect product identity in installers and runtime, release risk, and user confusion.
 
 **Acceptance Criteria**
 
-- [x] Status remains `error`/`degraded` until a successful poll response occurs.
-- [x] Recovery path transitions are explicit and testable.
-- [x] Retry behavior is documented in state notes.
+- [x] Release and nightly build metadata use Sinnamon app IDs and product names.
+- [x] Runtime config brand values are Sinnamon-specific.
+- [x] Element-specific telemetry/update/bug-report endpoints were removed from the desktop variant configs.
 
 **Progress Notes**
 
-- 2026-03-03: Issue logged from polling flow review.
-- 2026-03-03: Fixed by keeping polling loop active via session token gating and only returning to `connected` on successful incremental sync responses.
+- 2026-04-04: Issue created during desktop launch readiness audit.
+- 2026-04-04: Updated desktop release/nightly build and config variants to Sinnamon branding; verified packaged output reports `appId: chat.sinnamon.desktop`, `productName: Sinnamon`.
 
-### SIN-0003 — Switching Matrix account/config can leave stale room and message data visible
+### SIN-0002 — Desktop dev startup does not guarantee webapp availability
 
 - Type: bug
-- Priority: p1
-- Severity: high
-- Area: state
+- Priority: p0
+- Severity: critical
+- Area: build
 - Status: resolved
 - Reporter: @copilot
 - Assignee: unassigned
-- Created: 2026-03-03
-- Updated: 2026-03-03
-- Links: src/state/useMatrixViewState.ts
+- Created: 2026-04-04
+- Updated: 2026-04-04
+- Links: package.json; apps/desktop/scripts/link-webapp.mjs; apps/desktop/src/asar.ts; apps/web/webpack.config.ts
 
 **Summary**
-When credentials or homeserver changed, prior session rooms/messages could remain in memory/UI until a new successful connect, causing cross-account data leakage in-session.
+Desktop startup assumed `webapp` or `webapp.asar` exists, but dev workflow did not consistently build and stage web output before launching Electron.
 
 **Steps to Reproduce**
 
-1. Connect using Account A and view rooms/messages.
-2. Open settings and replace with Account B credentials.
-3. Before successful reconnect, observe Account A data can remain visible.
+1. Run desktop dev command from a clean state.
+2. Electron launches without staged web assets.
+3. App fails to load UI content.
 
 **Expected Behavior**
-Session-scoped data should be cleared or isolated immediately when account context changes.
+Desktop dev startup should always stage the web output before launching Electron.
 
 **Impact**
-Privacy and correctness risk in shared-session or multi-account workflows.
+Blocks reliable local development and onboarding.
 
 **Acceptance Criteria**
 
-- [x] Changing config invalidates prior account room/message state immediately.
-- [x] UI clearly shows reconnecting/empty state while new session data loads.
-- [x] No cross-account room/timeline bleed-through.
+- [x] Dev script builds web output before desktop launch.
+- [x] Dev script stages output into expected desktop `webapp` location.
+- [x] Fresh startup path now includes deterministic staging (`stage:webapp:desktop`) before Electron launch.
 
 **Progress Notes**
 
-- 2026-03-03: Issue logged during edge-case session review.
-- 2026-03-03: Fixed by fingerprinting active session config and immediately clearing rooms/messages/token whenever saved config context changes.
-
-## Tagging Guidance
-
-- `Type=bug` when behavior deviates from expected behavior.
-- `Type=feature-gap` when expected product capability is missing by design scope.
-- `Priority` should reflect urgency/order of execution; `Severity` should reflect user/system impact.
-- If uncertain between two tags, choose the higher-impact tag and document rationale in `Progress Notes`.
+- 2026-04-04: Issue created during desktop launch readiness audit.
+- 2026-04-04: Added `apps/desktop/scripts/link-webapp.mjs` and updated root scripts to build + stage web assets before desktop start.
 
 ## Change Discipline
 
@@ -482,4 +284,4 @@ When updating this file:
 1. Move issues between sections as status changes.
 2. Update `Updated` date on every issue change.
 3. Keep `Next Issue ID` accurate whenever a new issue is added.
-4. Preserve historical notes; do not delete prior progress entries.
+4. Keep acceptance criteria concrete and testable.

@@ -1,36 +1,43 @@
 # Sinnamon
 
-Sinnamon is a custom Matrix client inspired by Element and Cinny, with a familiar Discord-style UX and deeper customization.
+Sinnamon is a custom Matrix client built around a Discord-like user experience, with a focus on room navigation, timeline reliability, encryption recovery flows, and long-term customization support.
 
-## Status
+## Project Status
 
-Pre-release (`0.1.0-alpha.0`), active development.
+Sinnamon is currently in pre-release development at `0.1.0-alpha.0`.
 
-## Current Focus
+The current implementation focus is:
 
-- Discord-like layout and interaction model
-- Matrix room navigation and timeline reliability
-- Encryption UX direction with key storage/import flows
-- Customization foundation for emoji/stickers/themes
+- Discord-like layout and interaction structure
+- Stable Matrix room navigation and message timeline behavior
+- Encryption UX with key storage, import, and recovery direction
+- Theming, emoji, and sticker customization foundations
 
-## Planned Features
+## Roadmap
+
+Planned near-term work includes:
 
 - Custom emojis, stickers, and animated stickers
 - Profile and room visual customization
-- Future: self-hosted P2P voice chat using Opus
+- Continued Matrix reliability and UX polish
 
-## Tech Stack
+Longer-term work includes:
+
+- Self-hosted peer-to-peer voice chat using Opus
+
+## Technology Stack
 
 - Electron
 - React
 - TypeScript
 - Vite
 
-## Project Docs
+## Repository Documents
 
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
-- Issue tracker: [ISSUES.md](ISSUES.md)
+- Issues: [ISSUES.md](ISSUES.md)
 - Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Legal Disclaimer: [LEGAL_DISCLAIMER.md](LEGAL_DISCLAIMER.md)
 
 ## Development
 
@@ -40,49 +47,49 @@ Install dependencies:
 npm install
 ```
 
-Run development server:
+Run the development server:
 
 ```bash
 npm run dev
 ```
 
-Run local Matrix mock server (for testing without real server credentials):
+Run the local Matrix mock server for offline or isolated testing:
 
 ```bash
 npm run dev:mock-matrix
 ```
 
-Use these in Settings for local testing:
+Use the following settings for local mock-server testing:
 
 - Homeserver URL: `http://127.0.0.1:8787`
 - Username: `@tester:local`
 - Password: any value
 
-Run Electron directly (uses built assets when packaged, dev server in development):
+Run the Electron app directly:
 
 ```bash
 npm run start
 ```
 
-Build (release bundle):
+Build the production web bundle:
 
 ```bash
 npm run build
 ```
 
-Package Electron Debug build (unpacked app for validation):
+Create the Electron Debug package for validation:
 
 ```bash
 npm run package:debug
 ```
 
-Package Electron Release build (Windows NSIS installer):
+Create the Electron Release package for validation:
 
 ```bash
 npm run package:release
 ```
 
-Preview production build:
+Preview the production web bundle locally:
 
 ```bash
 npm run preview
@@ -91,9 +98,13 @@ npm run preview
 ## Quality Expectations
 
 - Maintain a professional automated testing suite.
-- Run and pass relevant tests before build validation.
+- Run the relevant tests before build validation.
 - Validate both Debug and Release build variants for implementation changes.
+
+## Legal Notice
+
+Legal restrictions and project-specific disclaimer terms are maintained in [LEGAL_DISCLAIMER.md](LEGAL_DISCLAIMER.md).
 
 ## Contributing
 
-Please follow the project standards in the repository docs and keep entries in `CHANGELOG.md` and `ISSUES.md` up to date.
+Follow the repository standards and keep [CHANGELOG.md](CHANGELOG.md) and [ISSUES.md](ISSUES.md) current when making meaningful project changes.

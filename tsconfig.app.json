@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./apps",
+    "noEmit": true
+  },
+  "include": [
+    "apps/web/src",
+    "apps/desktop/src"
+  ]
+}

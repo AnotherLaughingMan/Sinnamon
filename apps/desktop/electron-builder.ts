@@ -56,7 +56,7 @@ type Writable<T> = NonNullable<
 >;
 
 // Load the default variant as a base configuration
-const DEFAULT_VARIANT = path.join("element.io", "release", "build.json");
+const DEFAULT_VARIANT = path.join("sinnamon", "release", "build.json");
 let variant: Variant = JSON.parse(fs.readFileSync(DEFAULT_VARIANT, "utf8"));
 
 /**
@@ -172,6 +172,9 @@ const config: Omit<Writable<Configuration>, "electronFuses"> & {
             signingHashAlgorithms: ["sha256"],
         },
         icon: "build/icon.ico",
+    },
+    squirrelWindows: {
+        loadingGif: "build/icon.png",
     },
     msi: {
         perMachine: true,

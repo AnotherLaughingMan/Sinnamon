@@ -68,3 +68,135 @@ Please see LICENSE files in the repository root for full details.
         opacity: 0.8;
     }
 }
+
+.mx_SinnamonLayout {
+    display: grid;
+    grid-template-columns: 72px 280px minmax(0, 1fr);
+    height: 100%;
+    width: 100%;
+    min-width: 0;
+}
+
+.mx_SinnamonLayout--withRightPanel {
+    grid-template-columns: 72px 280px minmax(0, 1fr) 320px;
+}
+
+.mx_SinnamonLayout_serverRail {
+    border-inline-end: 1px solid $message-action-bar-border-color;
+    background: color-mix(in srgb, $accent 8%, $background);
+    min-width: 0;
+    overflow: hidden;
+}
+
+.mx_SinnamonLayout_channelSidebar {
+    border-inline-end: 1px solid $message-action-bar-border-color;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.mx_ServerRail {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+}
+
+.mx_ServerRail_brand {
+    display: flex;
+    justify-content: center;
+    padding: 12px 0 8px;
+}
+
+.mx_ServerRail_brandBadge {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, $accent, color-mix(in srgb, $accent 64%, white));
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    box-shadow: 0 10px 24px color-mix(in srgb, $accent 28%, transparent);
+}
+
+.mx_ServerRail_content {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+
+    .mx_SpacePanel {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.mx_ChannelSidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    background: color-mix(in srgb, $background 94%, black);
+}
+
+.mx_ChannelSidebar_header {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 0 18px;
+    border-block-end: 1px solid $message-action-bar-border-color;
+    background: color-mix(in srgb, $background 88%, black);
+}
+
+.mx_ChannelSidebar_title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $secondary-content;
+}
+
+.mx_ChannelSidebar_content {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+
+    > .mx_LeftPanel_outerWrapper {
+        flex: 1;
+        min-height: 0;
+        min-width: 0;
+    }
+}
+
+.mx_SinnamonLayout_main {
+    min-width: 0;
+    height: 100%;
+}
+
+.mx_SinnamonLayout_rightPanel {
+    border-inline-start: 1px solid $message-action-bar-border-color;
+    min-width: 0;
+}
+
+@media (max-width: 1100px) {
+    .mx_SinnamonLayout {
+        grid-template-columns: 64px 240px minmax(0, 1fr);
+    }
+
+    .mx_SinnamonLayout--withRightPanel {
+        grid-template-columns: 64px 240px minmax(0, 1fr);
+    }
+
+    .mx_SinnamonLayout_rightPanel {
+        display: none;
+    }
+
+    .mx_ChannelSidebar_header {
+        min-height: 52px;
+        padding-inline: 14px;
+    }
+}

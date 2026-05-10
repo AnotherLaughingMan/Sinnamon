@@ -87,7 +87,7 @@ export async function create(): Promise<void> {
         // Windows likes ico's too much.
         if (process.platform === "win32") {
             try {
-                const icoPath = path.join(app.getPath("temp"), "win32_element_icon.ico");
+                const icoPath = path.join(app.getPath("temp"), "win32_sinnamon_icon.ico");
                 await writeFile(icoPath, await pngToIco(newFavicon.toPNG()));
                 newFavicon = nativeImage.createFromPath(icoPath);
             } catch (e) {

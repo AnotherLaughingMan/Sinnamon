@@ -1,0 +1,4 @@
+This directory contains the desktop variant configuration used by Sinnamon.
+
+These files define release and nightly branding/application identity values for
+Sinnamon packaging.

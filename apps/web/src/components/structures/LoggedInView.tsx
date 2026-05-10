@@ -72,6 +72,9 @@ import { Landmark, LandmarkNavigation } from "../../accessibility/LandmarkNaviga
 import { ModuleApi } from "../../modules/Api.ts";
 import { SDKContext } from "../../contexts/SDKContext.ts";
 import { ResizerViewModel } from "../../viewmodels/structures/ResizerViewModel.ts";
+import SinnamonLayout from "../../ui/layout/SinnamonLayout";
+import ServerRail from "../../ui/layout/ServerRail";
+import ChannelSidebar from "../../ui/rooms/ChannelSidebar";
 
 // We need to fetch each pinned message individually (if we don't already have it)
 // so each pinned message may trigger a request. Limit the number per room for sanity.
@@ -756,6 +759,8 @@ class LoggedInView extends React.Component<IProps, IState> {
         });
 
         const useNewRoomList = SettingsStore.getValue("feature_new_room_list");
+        const config = this.props.config as Record<string, unknown>;
+        const useSinnamonShell = useNewRoomList && Boolean(config.sinnamon_discord_layout);
 
         const leftPanelWrapperClasses = classNames({
             mx_LeftPanel_wrapper: true,
@@ -796,7 +801,19 @@ class LoggedInView extends React.Component<IProps, IState> {
 
         const roomView = <div className="mx_RoomView_wrapper">{pageElement}</div>;
         const content =
-            useNewRoomList && this.resizerViewModel ? (
+            useSinnamonShell ? (
+                <SinnamonLayout
+                    serverRail={
+                        <ServerRail>
+                            <SpacePanel />
+                        </ServerRail>
+                    }
+                    channelSidebar={<ChannelSidebar>{leftPanel}</ChannelSidebar>}
+                    main={roomView}
+                    showRightPanel={false}
+                    rightPanel={<div className="mx_SinnamonLayout_rightPanelPlaceholder" />}
+                />
+            ) : useNewRoomList && this.resizerViewModel ? (
                 <GroupView vm={this.resizerViewModel}>
                     <SpacePanel />
                     <LeftResizablePanelView

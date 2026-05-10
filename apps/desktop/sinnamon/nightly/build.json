@@ -1,0 +1,9 @@
+{
+    "appId": "chat.sinnamon.desktop.nightly",
+    "name": "sinnamon-desktop-nightly",
+    "productName": "Sinnamon Nightly",
+    "description": "Sinnamon desktop client (nightly unstable build)",
+    "protocols": ["chat.sinnamon.desktop.nightly", "sinnamon"],
+    "linux.executableName": "sinnamon-desktop-nightly",
+    "linux.deb.name": "sinnamon-nightly"
+}
